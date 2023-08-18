@@ -1,11 +1,30 @@
 <script setup lang="ts">
+import { useMovieStore } from "../store/movieStore";
+import { useSearchStore } from "../store/searchStore";
 import { Movie } from "../types/movie";
 
 type Props = {
   movie: Movie;
+  isSearch?: boolean;
 };
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  isSearch: false,
+});
+
+const movieStore = useMovieStore();
+const searchStore = useSearchStore();
+
+const toggleWatched = (id: number) => {
+  movieStore.toggleWatched(id);
+};
+const deleteMovie = (id: number) => {
+  movieStore.deleteMovie(id);
+};
+
+const addMovie = (movie: Movie) => {
+  searchStore.addMovieToWatchlist(movie);
+};
 </script>
 
 <template>
@@ -20,12 +39,22 @@ defineProps<Props>();
         {{ movie.original_title }} ({{ movie.release_date }})
       </div>
       <span class="movie-overview">{{ movie.overview }}</span>
-      <div class="movie-buttons">
-        <button class="btn movie-buttons-watched">
+      <div v-if="isSearch" class="movie-buttons">
+        <button @click="addMovie(movie)" class="btn btn_green">Add</button>
+      </div>
+
+      <div v-else class="movie-buttons">
+        <button
+          @click="toggleWatched(movie.id)"
+          class="btn movie-buttons-watched"
+        >
           <span v-if="!movie.isWatched">Watched</span>
           <span v-else>Unwatched</span>
         </button>
-        <button class="btn movie-buttons-delete">Delete</button>
+
+        <button @click="deleteMovie(movie.id)" class="btn movie-buttons-delete">
+          Delete
+        </button>
       </div>
     </div>
   </div>

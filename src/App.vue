@@ -2,12 +2,17 @@
 import { computed } from "vue";
 import Movie from "./components/Movie.vue";
 import { useMovieStore } from "./store/movieStore";
+import Search from "./components/Search.vue";
 
 const movieStore = useMovieStore();
 
 const isFavoriteTab = computed(() => {
   return movieStore.activeTab === 1;
 });
+
+const setTab = (tab: number) => {
+  movieStore.setActiveTab(tab);
+};
 </script>
 
 <template>
@@ -17,10 +22,24 @@ const isFavoriteTab = computed(() => {
       <h2>My Favorite Movies</h2>
     </header>
     <div class="tabs">
-      <button :class="['btn', { btn_green: isFavoriteTab }]">Favorite</button>
-      <button :class="['btn', { btn_green: !isFavoriteTab }]">Search</button>
+      <button @click="setTab(1)" :class="['btn', { btn_green: isFavoriteTab }]">
+        Favorite
+      </button>
+      <button
+        @click="setTab(2)"
+        :class="['btn', { btn_green: !isFavoriteTab }]"
+      >
+        Search
+      </button>
     </div>
     <div class="movies" v-if="isFavoriteTab">
+      <h3>Watched Movies</h3>
+      <Movie
+        v-for="movie in movieStore.getWatcherMovies"
+        :key="movie.id"
+        :movie="movie"
+      />
+
       <h3>All Movies</h3>
       <Movie
         v-for="movie in movieStore.movies"
@@ -28,7 +47,9 @@ const isFavoriteTab = computed(() => {
         :movie="movie"
       />
     </div>
-    <div class="search" v-else>Search</div>
+    <div class="search" v-else>
+      <Search />
+    </div>
   </main>
 </template>
 
