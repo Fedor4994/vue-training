@@ -14,17 +14,6 @@ withDefaults(defineProps<Props>(), {
 
 const movieStore = useMovieStore();
 const searchStore = useSearchStore();
-
-const toggleWatched = (id: number) => {
-  movieStore.toggleWatched(id);
-};
-const deleteMovie = (id: number) => {
-  movieStore.deleteMovie(id);
-};
-
-const addMovie = (movie: Movie) => {
-  searchStore.addMovieToWatchlist(movie);
-};
 </script>
 
 <template>
@@ -40,19 +29,27 @@ const addMovie = (movie: Movie) => {
       </div>
       <span class="movie-overview">{{ movie.overview }}</span>
       <div v-if="isSearch" class="movie-buttons">
-        <button @click="addMovie(movie)" class="btn btn_green">Add</button>
+        <button
+          @click="searchStore.addMovieToWatchlist(movie)"
+          class="btn btn_green"
+        >
+          Add
+        </button>
       </div>
 
       <div v-else class="movie-buttons">
         <button
-          @click="toggleWatched(movie.id)"
+          @click="movieStore.toggleWatched(movie.id)"
           class="btn movie-buttons-watched"
         >
           <span v-if="!movie.isWatched">Watched</span>
           <span v-else>Unwatched</span>
         </button>
 
-        <button @click="deleteMovie(movie.id)" class="btn movie-buttons-delete">
+        <button
+          @click="movieStore.deleteMovie(movie.id)"
+          class="btn movie-buttons-delete"
+        >
           Delete
         </button>
       </div>

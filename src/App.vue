@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import Movie from "./components/Movie.vue";
 import { useMovieStore } from "./store/movieStore";
 import Search from "./components/Search.vue";
 
 const movieStore = useMovieStore();
 
+watch(
+  () => movieStore.movies,
+  (state) => {
+    localStorage.setItem("movies", JSON.stringify(state));
+  },
+  { deep: true }
+);
+
 const isFavoriteTab = computed(() => {
+  console.log(movieStore.activeTab === 1);
   return movieStore.activeTab === 1;
 });
-
-const setTab = (tab: number) => {
-  movieStore.setActiveTab(tab);
-};
 </script>
 
 <template>
@@ -22,11 +27,14 @@ const setTab = (tab: number) => {
       <h2>My Favorite Movies</h2>
     </header>
     <div class="tabs">
-      <button @click="setTab(1)" :class="['btn', { btn_green: isFavoriteTab }]">
+      <button
+        @click="movieStore.setActiveTab(1)"
+        :class="['btn', { btn_green: isFavoriteTab }]"
+      >
         Favorite
       </button>
       <button
-        @click="setTab(2)"
+        @click="movieStore.setActiveTab(2)"
         :class="['btn', { btn_green: !isFavoriteTab }]"
       >
         Search
@@ -35,7 +43,7 @@ const setTab = (tab: number) => {
     <div class="movies" v-if="isFavoriteTab">
       <h3>Watched Movies</h3>
       <Movie
-        v-for="movie in movieStore.getWatcherMovies"
+        v-for="movie in movieStore.getWatchedMovies"
         :key="movie.id"
         :movie="movie"
       />

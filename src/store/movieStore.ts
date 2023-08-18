@@ -7,7 +7,7 @@ export type MovieStore = {
 };
 
 export type MovieGetters = {
-  getWatcherMovies: (state: MovieStore) => Movie[];
+  getWatchedMovies: (state: MovieStore) => Movie[];
 };
 
 export type MovieAction = {
@@ -23,7 +23,7 @@ export const useMovieStore = defineStore<
   MovieAction
 >("movieStore", {
   state: () => ({
-    movies: [],
+    movies: JSON.parse(localStorage.getItem("movies")!) || [],
     activeTab: 1,
   }),
   actions: {
@@ -39,7 +39,7 @@ export const useMovieStore = defineStore<
     },
   },
   getters: {
-    getWatcherMovies(state) {
+    getWatchedMovies(state) {
       return state.movies.filter((movie) => movie.isWatched);
     },
   },
